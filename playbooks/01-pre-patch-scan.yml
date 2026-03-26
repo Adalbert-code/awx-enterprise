@@ -1,0 +1,41 @@
+---
+- name: Pre-patch scan — inventaire des mises à jour disponibles
+  hosts: okd_workers
+  gather_facts: true
+  tasks:
+
+    - name: Récupérer la liste des packages à mettre à jour
+      ansible.builtin.shell: |
+        rpm -qa --last | head -20
+        echo "---UPDATES---"
+        dnf check-update --quiet 2>/dev/null | head -30 || true
+      register: pkg_scan
+      changed_when: false
+
+    - name: Récupérer la version du kernel actuel
+      ansible.builtin.command: uname -r
+      register: kernel_version
+      changed_when: false
+
+    - name: Afficher le rapport pre-patch
+      ansible.builtin.debug:
+        msg:
+          - "Host        : {{ inventory_hostname }}"
+          - "OS          : {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel      : {{ kernel_version.stdout }}"
+          - "Uptime      : {{ ansible_uptime_seconds | int // 3600 }}h"
+          - "Updates     : {{ pkg_scan.stdout_lines | length }} lignes"
+
+    - name: Sauvegarder le rapport pre-patch
+      ansible.builtin.copy:
+        content: |
+          === PRE-PATCH REPORT ===
+          Date    : {{ ansible_date_time.iso8601 }}
+          Host    : {{ inventory_hostname }}
+          OS      : {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Kernel  : {{ kernel_version.stdout }}
+          
+          {{ pkg_scan.stdout }}
+        dest: /tmp/pre-patch-{{ inventory_hostname }}.txt
+        mode: '0644'
+      delegate_to: localhost
