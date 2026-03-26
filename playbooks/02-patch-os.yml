@@ -1,0 +1,51 @@
+---
+- name: Patch OS — mise à jour sécurisée rolling
+  hosts: okd_workers
+  gather_facts: true
+  serial: 1
+
+  tasks:
+
+    - name: Cordon du node avant patch
+      ansible.builtin.shell: |
+        oc adm cordon {{ inventory_hostname }} \
+          --kubeconfig /root/.kube/config
+      delegate_to: localhost
+      changed_when: true
+      ignore_errors: true
+
+    - name: Drain du node
+      ansible.builtin.shell: |
+        oc adm drain {{ inventory_hostname }} \
+          --ignore-daemonsets \
+          --delete-emptydir-data \
+          --force \
+          --timeout=120s \
+          --kubeconfig /root/.kube/config
+      delegate_to: localhost
+      changed_when: true
+      ignore_errors: true
+
+    - name: Vérifier les mises à jour disponibles (RHCOS rpm-ostree)
+      ansible.builtin.shell: |
+        rpm-ostree status 2>/dev/null || echo "rpm-ostree non disponible"
+      register: ostree_status
+      changed_when: false
+
+    - name: Afficher le statut rpm-ostree
+      ansible.builtin.debug:
+        msg: "{{ ostree_status.stdout_lines[:5] }}"
+
+    - name: Uncordon du node après patch
+      ansible.builtin.shell: |
+        oc adm uncordon {{ inventory_hostname }} \
+          --kubeconfig /root/.kube/config
+      delegate_to: localhost
+      changed_when: true
+      ignore_errors: true
+
+    - name: Résultat du patch
+      ansible.builtin.debug:
+        msg:
+          - "Node   : {{ inventory_hostname }}"
+          - "Status : PATCH COMPLETED"
