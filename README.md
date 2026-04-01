@@ -21,6 +21,9 @@
 ---
 
 ## 1. Architecture globale
+![AWX Dashboard](docs/screenshots/01-awx-dashboard.png)
+*Interface AWX — Tableau de bord*
+
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -577,6 +580,9 @@ En production bancaire (BNP Paribas, RATP), tout patch nécessite :
 ```
 
 ### 5.4 Créer les Job Templates
+![Workflow Patch OS Visualiseur](docs/screenshots/03-workflow-patch-os-visualizer.png)
+*Visualiseur du workflow Patch OS avec approbation*
+
 
 ```
 Ressources → Modèles → Ajouter → Modèle de job
@@ -625,6 +631,12 @@ Construction du workflow :
 ```
 
 ### 5.6 Résultat obtenu
+![Workflow Patch OS Résultat](docs/screenshots/04-workflow-patch-os-result.png)
+*Résultat du workflow Patch OS — 4 nœuds réussis*
+
+![Pre-Patch Scan Output](docs/screenshots/07-pre-patch-scan-output.png)
+*Sortie du job Pre-Patch Scan — rapport par worker*
+
 
 ```
 WORKFLOW-Patch-OS-Enterprise   ✅ Réussi   Total Nœuds : 4
@@ -847,6 +859,12 @@ Ressources → Modèles → Ajouter → Modèle de flux de travail
 ```
 
 ### 6.5 Résultats obtenus
+![Workflow CIS Résultat](docs/screenshots/05-workflow-cis-result.png)
+*Résultat du workflow CIS Hardening — approbation RSSI*
+
+![CIS Audit Output](docs/screenshots/08-cis-audit-output.png)
+*Rapport CIS Audit — non-conformités identifiées*
+
 
 **Audit pre-hardening (non-conformités identifiées) :**
 
@@ -1230,6 +1248,9 @@ Ressources → Modèles → Ajouter → Modèle de flux de travail
 > est automatiquement restaurée (self-healing).
 
 ### Approche A — Trigger manuel
+![Workflow CICD Résultat](docs/screenshots/06-workflow-cicd-result.png)
+*Résultat du workflow CI/CD — Build + Deploy réussis*
+
 
 ```
 Ressources → Modèles → WORKFLOW-CICD-Deploy-A → Lancer ▶
@@ -1307,7 +1328,10 @@ GitHub POST webhook → nginx:9444 → AWX
 WORKFLOW-CICD-Deploy-A  ✅ Réussi  launch_type: webhook
 ```
 
-### Approche C — Gitea on-premise + AWX API Token
+### Approche C — Gitea on-premise
+![Gitea Repository](docs/screenshots/09-gitea-repo.png)
+*Gitea on-premise — repo awx-enterprise*
+ + AWX API Token
 
 **Architecture :**
 ```
@@ -1478,6 +1502,12 @@ WORKFLOW-CICD-Deploy-A  ✅ Réussi
 ---
 
 ## 8. Résultats et validation
+![AWX Workflows List](docs/screenshots/02-awx-workflows-list.png)
+*Liste des 3 workflows enterprise déployés dans AWX*
+
+![Simple WebApp Déployée](docs/screenshots/10-webapp-deployed.png)
+*Application simple-webapp déployée sur OKD via AWX CI/CD*
+
 
 ### Récapitulatif des workflows déployés
 
